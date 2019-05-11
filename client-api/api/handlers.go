@@ -5,7 +5,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"t_task/proto"
+
+	"github.com/gorilla/mux"
 )
 
 func (s *Server) handleHealthCheck() http.HandlerFunc {
@@ -28,9 +29,57 @@ func (s *Server) handleHealthCheck() http.HandlerFunc {
 
 func (s *Server) handleList() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ports, err := s.PDServiceClient.List(context.Background(), &proto.NoParams{})
+		ports, err := s.Client.List(context.Background())
 		if err != nil {
 			w.WriteHeader(500)
+			w.Write([]byte("Error calling grpc..."))
+			w.Write([]byte(err.Error()))
+			return
+		}
+		resp, err := json.Marshal(ports)
+		if err != nil {
+		}
+		w.WriteHeader(200)
+		w.Write(resp)
+	}
+}
+
+func (s *Server) handleSinglePort() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		code, ok := mux.Vars(r)["code"]
+		if !ok {
+			log.Println("Not valid Port CODE provided (should be XXXXX).")
+			w.WriteHeader(400)
+			w.Write([]byte("Invalid code."))
+			return
+		}
+		ports, err := s.Client.GetByID(context.Background(), code)
+		if err != nil {
+			w.WriteHeader(500)
+			w.Write([]byte("Error calling grpc..."))
+			return
+		}
+		resp, err := json.Marshal(ports)
+		if err != nil {
+		}
+		w.WriteHeader(200)
+		w.Write(resp)
+	}
+}
+
+func (s *Server) handleDelete() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		code, ok := mux.Vars(r)["code"]
+		if !ok {
+			log.Println("Not valid Port CODE provided (should be XXXXX).")
+			w.WriteHeader(400)
+			w.Write([]byte("Invalid code."))
+			return
+		}
+		// Better error-handling? Split into datalayer errors and transport errors!
+		ports, err := s.Client.DeleteByID(context.Background(), code)
+		if err != nil {
+			w.WriteHeader(404)
 			w.Write([]byte("Error calling grpc..."))
 			return
 		}

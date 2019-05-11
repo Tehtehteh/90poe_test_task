@@ -13,6 +13,7 @@ type Config struct {
 	JaegerAgentPort    string  `envconfig:"JAEGER_AGENT_PORT" default:"6831"`
 	JaegerSamplerType  string  `envconfig:"JAEGER_SAMPLER_TYPE" default:"const"`
 	JaegerSamplerParam float64 `envconfig:"JAEGER_SAMPLER_PARAM" default:"1"`
+	PDServiceAddr      string  `envconfig:"PORT_DOMAIN_SERVICE_ADDRESS" default:"localhost:8081"`
 }
 
 func CreateConfig() (*Config, error) {

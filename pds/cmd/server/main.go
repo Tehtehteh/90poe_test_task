@@ -8,12 +8,20 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	"t_task/pds/api"
+	"t_task/pds/config"
 	"t_task/pds/datalayer"
 	"t_task/proto"
 )
 
 func main() {
-	listener, err := net.Listen("tcp", ":4040")
+	// Reading .env (if present) and creating config instance
+	env, err := config.CreateConfig()
+	if err != nil {
+		log.Printf("Error creating config instance: %s", err)
+		return
+	}
+	// Creating listener for RPC Service
+	listener, err := net.Listen("tcp", env.ListenAddress)
 	if err != nil {
 		panic(err)
 	}

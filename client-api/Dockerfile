@@ -1,7 +1,7 @@
 # Build the project
 FROM golang:1.12.0 as builder
 
-WORKDIR /go/src/github.com/tehtehteh/t_task
+WORKDIR /go/src/t_task
 ADD . .
 
 RUN make build

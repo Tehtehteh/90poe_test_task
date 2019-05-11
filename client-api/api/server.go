@@ -10,10 +10,8 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"google.golang.org/grpc"
 	"t_task/client-api/config"
 	"t_task/client-api/trace"
-	"t_task/proto"
 )
 
 type Servable interface {
@@ -24,19 +22,15 @@ type Servable interface {
 type Server struct {
 	Config *config.Config
 	Router *mux.Router
-	proto.PDServiceClient
+	Client *PDClient
 }
 
 func CreateServer(config *config.Config) *Server {
-	conn, err := grpc.Dial("localhost:4040", grpc.WithInsecure())
-	if err != nil {
-		log.Println(err)
-	}
-	client := proto.NewPDServiceClient(conn)
+	client := NewPDClient(config.PDServiceAddr)
 	s := Server{
-		Config:          config,
-		Router:          mux.NewRouter(),
-		PDServiceClient: client,
+		Config: config,
+		Router: mux.NewRouter(),
+		Client: client,
 	}
 	return &s
 }
@@ -48,7 +42,12 @@ func (s *Server) Serve() {
 	if err != nil {
 		log.Fatal(context.Background(), "Failed to init global tracer: ", err)
 	} else {
-		defer closer.Close()
+		defer func() {
+			err := closer.Close()
+			if err != nil {
+				log.Printf("error closing jaeger global tracer: %s", err)
+			}
+		}()
 	}
 	s.routes()
 	// server config

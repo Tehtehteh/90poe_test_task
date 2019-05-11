@@ -13,6 +13,7 @@ message Port {
     string Timezone = 8;
     repeated string Unlocs = 9;
     string Code = 10;
+    repeated string Regions = 11;
 }
 
 message Ports {
@@ -25,9 +26,14 @@ message DeletePortByIDMsg {
 
 message NoParams {}
 
+message GetByIDMsg {
+    string ID = 1;
+}
+
 service PDService {
     rpc Insert(Port) returns (Port);
     rpc List(NoParams) returns (Ports);
     rpc DeleteByID(DeletePortByIDMsg) returns (Port);
+    rpc GetByID(GetByIDMsg) returns (Port);
 }
 

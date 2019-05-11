@@ -3,8 +3,6 @@ package api
 import (
 	"context"
 	"errors"
-	"log"
-
 	"t_task/pds/datalayer"
 	"t_task/proto"
 )
@@ -40,8 +38,22 @@ func (s *PDService) Insert(ctx context.Context, p *proto.Port) (*proto.Port, err
 }
 
 func (s *PDService) DeleteByID(ctx context.Context, param *proto.DeletePortByIDMsg) (*proto.Port, error) {
-	if param != nil {
-		log.Printf("Received following delete by ID param: %s", param.ID)
+	if param == nil {
+		return nil, errors.New("nil param received (DeleteByID)")
 	}
-	return nil, nil
+	id := param.ID
+	p, err := s.PortsRepository.Delete(id)
+	if err != nil {
+		return nil, err
+	}
+	return p, nil
+}
+
+func (s *PDService) GetByID(ctx context.Context, param *proto.GetByIDMsg) (*proto.Port, error) {
+	id := param.ID
+	p, err := s.PortsRepository.FindOne(id)
+	if err != nil {
+		return nil, err
+	}
+	return p, nil
 }

@@ -24,22 +24,18 @@ func main() {
 	server := api.CreateServer(env)
 
 	log.Printf("Reading %s filename to parse it...\n", portsJsonPath)
-	p, err := ports.ReadPortsFromFile(portsJsonPath)
+	_, err = ports.ReadPortsFromFile(portsJsonPath, func(p proto.Port) error {
+		log.Printf("Tyring to send port by %s ID over gRPC", p.ID)
+		_, err := server.Client.Insert(context.Background(), &p)
+		if err != nil {
+			return err
+		}
+		log.Printf("Successfully sent port over gRPC (port ID: %s)", p.ID)
+		return err
+	})
 	if err != nil {
 		log.Fatalf("Error reading ports from %s. Error: %s", portsJsonPath, err)
 	}
 
-	log.Println("Trying to insert ports one-by-one to PDS")
-	var failedPorts []*proto.Port
-	portsLength := len(p)
-	for i := range p {
-		log.Printf("Inserting port #%d of total %d", i+1, portsLength)
-		port, err := server.PDServiceClient.Insert(context.Background(), &p[i])
-		if err != nil {
-			failedPorts = append(failedPorts, port)
-			log.Printf("Error inserting port #%d. Message: %s", i+1, err)
-		}
-	}
-	log.Printf("Successfully inserted ports into PDService. Number of failed port insertions: %d.", len(failedPorts))
 	server.Serve()
 }
