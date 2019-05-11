@@ -18,7 +18,7 @@ cp ports.json client-api/ && cd client-api && make run
 ```bash
 docker-compose up -d
 ```
-After that you should be able to access `localhost:8081` and check
+After that you should be able to access `localhost:8080` and check
 out [endpoints](#routes) of Client-API.
 
 ## Client-API

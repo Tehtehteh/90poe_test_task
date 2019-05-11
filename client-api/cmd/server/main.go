@@ -25,7 +25,7 @@ func main() {
 
 	log.Printf("Reading %s filename to parse it...\n", portsJsonPath)
 	_, err = ports.ReadPortsFromFile(portsJsonPath, func(p proto.Port) error {
-		log.Printf("Tyring to send port by %s ID over gRPC", p.ID)
+		log.Printf("Trying to send port by %s ID over gRPC", p.ID)
 		_, err := server.Client.Insert(context.Background(), &p)
 		if err != nil {
 			return err
