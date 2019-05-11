@@ -3,6 +3,24 @@
 Projects consists of gRPC service called `pb`
 and it's client API called `client-api`.
 
+## Running
+### Without docker compose
+Go version required >= 1.12 (go modules have been used).
+First run gRPC PortDomainService:
+```
+cd pds && make run
+```
+Then run Client-API service:
+```
+cp ports.json client-api/ && cd client-api && make run
+```
+### With docker compose
+```bash
+docker-compose up -d
+```
+After that you should be able to access `localhost:8081` and check
+out [endpoints](#routes) of Client-API.
+
 ## Client-API
 Code for Client-API is located [here](client-api).
 This service parses json file and creates entities which

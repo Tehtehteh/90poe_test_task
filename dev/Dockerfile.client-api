@@ -2,12 +2,13 @@
 FROM golang:1.12.0 as builder
 
 WORKDIR /go/src/t_task
-COPY ./ports.json .
-COPY ./proto proto
-COPY . client-api
+COPY ports.json .
+COPY proto proto
+COPY client-api client-api
 
-RUN make build
-RUN make test
+RUN cd client-api && make build && make test
+#RUN make build
+#RUN make test
 
 # Create production image for application with needed files
 FROM golang:1.12.0-alpine3.9
@@ -16,6 +17,7 @@ EXPOSE 8080
 
 RUN apk add --no-cache ca-certificates bash
 
-COPY --from=builder /go/src/t_task/main .
+COPY --from=builder /go/src/t_task/client-api/main .
+COPY --from=builder /go/src/t_task/ports.json .
 
 CMD ["./main"]
