@@ -1,0 +1,14 @@
+/.gopath/
+/.idea/
+/.vscode/
+/bin/
+/vendor/
+
+
+/.env
+/Release.key
+
+*.swp
+*.swo
+
+main

@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package proto;
+
+message Port {
+    string ID = 1;
+    string Name = 2;
+    string City = 3;
+    string Country = 4;
+    repeated string Alias = 5;
+    repeated float Coordinates = 6;
+    string Province = 7;
+    string Timezone = 8;
+    repeated string Unlocs = 9;
+    string Code = 10;
+}
+
+message Ports {
+    repeated Port response = 1;
+}
+
+message DeletePortByIDMsg {
+    string ID = 1;
+}
+
+message NoParams {}
+
+service PDService {
+    rpc Insert(Port) returns (Port);
+    rpc List(NoParams) returns (Ports);
+    rpc DeleteByID(DeletePortByIDMsg) returns (Port);
+}
+
