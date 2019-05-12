@@ -6,7 +6,7 @@ import (
 
 	"t_task/client-api/api"
 	"t_task/client-api/config"
-	"t_task/client-api/ports"
+	"t_task/client-api/parser"
 	"t_task/proto"
 )
 
@@ -24,9 +24,9 @@ func main() {
 	server := api.CreateServer(env)
 
 	log.Printf("Reading %s filename to parse it...\n", portsJsonPath)
-	_, err = ports.ReadPortsFromFile(portsJsonPath, func(p proto.Port) error {
+	_, err = parser.ReadPortsFromFile(portsJsonPath, func(p *proto.Port) error {
 		log.Printf("Trying to send port by %s ID over gRPC", p.ID)
-		_, err := server.Client.Insert(context.Background(), &p)
+		_, err := server.Client.Insert(context.Background(), p)
 		if err != nil {
 			return err
 		}
@@ -34,7 +34,7 @@ func main() {
 		return err
 	})
 	if err != nil {
-		log.Fatalf("Error reading ports from %s. Error: %s", portsJsonPath, err)
+		log.Fatalf("Error reading parser from %s. Error: %s", portsJsonPath, err)
 	}
 
 	server.Serve()

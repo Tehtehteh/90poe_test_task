@@ -13,6 +13,13 @@ type PDClient struct {
 	c proto.PDServiceClient
 }
 
+type IPDClient interface {
+	List(ctx context.Context) (*proto.Ports, error)
+	Insert(ctx context.Context, p *proto.Port) (*proto.Port, error)
+	DeleteByID(ctx context.Context, id string) (*proto.Port, error)
+	GetByID(ctx context.Context, id string) (*proto.Port, error)
+}
+
 func NewPDClient(addr string) *PDClient {
 	conn, err := grpc.Dial(addr, grpc.WithInsecure())
 	if err != nil {

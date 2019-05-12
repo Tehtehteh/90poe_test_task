@@ -1,4 +1,4 @@
-package ports
+package parser
 
 import (
 	"bufio"
@@ -11,7 +11,7 @@ import (
 	"t_task/proto"
 )
 
-type OnPortUnmarshalledCallback func(p proto.Port) error
+type OnPortUnmarshalledCallback func(p *proto.Port) error
 
 type PortReader func(dataSource string) ([]proto.Port, error)
 
@@ -61,7 +61,7 @@ func ReadPortsFromReader(reader io.Reader, cb OnPortUnmarshalledCallback) ([]pro
 		port.ID = id
 		if cb != nil {
 			// Callback with freshly created `proto.Port` instance.
-			err = cb(port)
+			err = cb(&port)
 			if err != nil {
 				log.Printf("error executing `onPortUnmarshalledCallback`: %s", err)
 			}

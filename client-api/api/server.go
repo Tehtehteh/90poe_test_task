@@ -22,7 +22,7 @@ type Servable interface {
 type Server struct {
 	Config *config.Config
 	Router *mux.Router
-	Client *PDClient
+	Client IPDClient
 }
 
 func CreateServer(config *config.Config) *Server {

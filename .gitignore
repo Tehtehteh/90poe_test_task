@@ -11,4 +11,6 @@
 *.swp
 *.swo
 
+ports.json
+fixture.json
 main
